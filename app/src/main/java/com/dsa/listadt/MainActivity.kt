@@ -15,9 +15,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.d(TAG, "Main Activity onCreate")
         val linkedList = SinglyLinkedList<Int>()
-        linkedList.insertAtFirst(Node(5))
-        linkedList.insertAtLast(Node(10))
+        linkedList.insertAtPosition(Node(7), 0)
+        linkedList.insertFirst(Node(5))
+        linkedList.insertLast(Node(10))
+        linkedList.insertFirst(Node(2))
+        linkedList.insertAtPosition(Node(1), 3)
         Log.d(TAG, "Size of the list: ${linkedList.size}")
+        printList(linkedList)
+    }
+
+    private fun printList(linkedList: SinglyLinkedList<Int>) {
+        var currentNode = linkedList.dataList
+        while (currentNode != null) {
+            Log.d(TAG, "@@@ Value: ${currentNode.data}")
+            currentNode = currentNode.next
+        }
     }
 
 /*    private fun hanoi(n: Int, fromPeg: Char, auxPeg: Char, toPeg: Char) {
