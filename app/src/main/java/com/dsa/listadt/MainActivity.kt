@@ -20,14 +20,27 @@ class MainActivity : AppCompatActivity() {
         linkedList.insertLast(Node(10))
         linkedList.insertFirst(Node(2))
         linkedList.insertAtPosition(Node(1), 3)
-        Log.d(TAG, "Size of the list: ${linkedList.size}")
+
+        Log.d(TAG, "Size of the list after add: ${linkedList.size}")
+        printList(linkedList)
+
+        linkedList.deleteFirst()
+        // this should return false as we don't have node with 2 value
+        Log.d(TAG, "Deleted value ${linkedList.deleteGivenNode(Node(2))}")
+        // Node with value 7 is present in the list so it should return true
+        Log.d(TAG, "Deleted value2 ${linkedList.deleteGivenNode(Node(7))}")
+        linkedList.deleteLast()
+
+        Log.d(TAG, "Node with value 5 contains in list: ${linkedList.contains(Node(5))}")
+        Log.d(TAG, "Node with value 12 contains in list: ${linkedList.contains(Node(12))}")
+        Log.d(TAG, "Size of the list after delete: ${linkedList.size}")
         printList(linkedList)
     }
 
     private fun printList(linkedList: SinglyLinkedList<Int>) {
         var currentNode = linkedList.dataList
         while (currentNode != null) {
-            Log.d(TAG, "@@@ Value: ${currentNode.data}")
+            Log.d(TAG, "Value: ${currentNode.data}")
             currentNode = currentNode.next
         }
     }
@@ -37,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("@@@", "Move disk 1 from $fromPeg to $toPeg")
             return
         } else {
-            hanoi(n -1, fromPeg, toPeg, auxPeg)
+            hanoi(n - 1, fromPeg, toPeg, auxPeg)
             Log.d("@@@", "Move disk $n from $fromPeg to $toPeg")
             hanoi(n - 1, auxPeg, fromPeg, toPeg)
         }

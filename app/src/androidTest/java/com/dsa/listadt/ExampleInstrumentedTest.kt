@@ -1,4 +1,4 @@
-package com.lokesh.listadt
+package com.dsa.listadt
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("com.lokesh.listadt", appContext.packageName)
+        assertEquals("com.dsa.listadt", appContext.packageName)
     }
 }

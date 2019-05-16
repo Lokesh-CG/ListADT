@@ -1,8 +1,5 @@
 package com.dsa.listadt.adt
 
-import android.util.Log
-import java.util.*
-
 private const val INVALID_POSITION = -1
 
 /**
@@ -67,43 +64,69 @@ class SinglyLinkedList<E> {
         } else false
     }
 
+    /**
+     * Remove first element or head of the list.
+     * @return true if list contains at least one node and got deleted else false.
+     */
     fun deleteFirst(): Boolean {
         return if (dataList == null) false
         else {
             val currentNode = dataList!!.next
             dataList = currentNode
+            size--
             true
         }
     }
 
+    /**
+     * Remove last element from the list
+     * @return true if list contains at least one node and got deleted else false.
+     */
     fun deleteLast(): Boolean {
 
-        return if (dataList == null) false
-        else if (dataList!!.next == null) {
-            dataList = null
-            true
-        }
-        else {
-            var currentNode = dataList
-            while (currentNode!!.next!!.next != null) {
-                currentNode = currentNode.next
+        return when {
+            dataList == null -> false
+            dataList!!.next == null -> {
+                dataList = null
+                size--
+                true
             }
-            currentNode.next = null
-            true
+            else -> {
+                var currentNode = dataList
+                while (currentNode!!.next!!.next != null) {
+                    currentNode = currentNode.next
+                }
+                currentNode.next = null
+                size--
+                true
+            }
         }
     }
 
+    /**
+     * Delete given node from the list.
+     * @param node Node to be deleted from the data list.
+     * @return status if given node is present and deleted from the list.
+     */
     fun deleteGivenNode(node: Node<E>): Boolean {
-        return if (dataList == null) false
-        else {
-            var currentNode = dataList
-            while (currentNode!!.next != null) {
-                currentNode = currentNode.next
-                if (currentNode!!.data == node.data) {
-                    return true
+        return when {
+            dataList == null -> false
+            dataList!!.data == node.data -> {
+                dataList = dataList!!.next
+                size--
+                true
+            } else -> {
+                var currentNode = dataList
+                while (currentNode!!.next != null) {
+                    if (currentNode.next!!.data == node.data) {
+                        currentNode.next = currentNode.next!!.next
+                        size--
+                        return true
+                    }
+                    currentNode = currentNode.next
                 }
+                false
             }
-            false
         }
     }
 

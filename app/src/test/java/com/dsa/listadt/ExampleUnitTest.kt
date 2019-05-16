@@ -1,4 +1,4 @@
-package com.lokesh.listadt
+package com.dsa.listadt
 
 import org.junit.Test
 
