@@ -1,6 +1,10 @@
 package com.dsa.listadt.adt
 
-private const val INVALID_POSITION = -1
+import android.util.Log
+
+// This indicate start index of the node
+private const val FIRST_POSITION = 0
+private val TAG = SinglyLinkedList::class.simpleName!!
 
 /**
  * Singly LinkedList class used to hold list of nodes in which nodes have a reference to its next
@@ -10,58 +14,61 @@ class SinglyLinkedList<E> {
 
     // Maintains current length/size of the linked list. # of nodes
     var size = 0
-    var dataList: Node<E>? = null
+    var firstNode: Node<E>? = null
 
     /**
-     * Insert given inputNode as the head of the linked list.
-     * @param inputNode inputNode to be inserted in linked list.
+     * Insert given data as the head of the linked list.
+     * @param data input data to be inserted in linked list as first item.
      */
-    fun insertFirst(inputNode: Node<E>) {
-        inputNode.next = dataList
-        dataList = inputNode
+    fun insertFirst(data: E) {
+        val node = Node(data, firstNode)
+        firstNode = node
         size++
     }
 
     /**
-     * Insert given inputNode as last item of the linked list.
-     * @param inputNode inputNode to be inserted in linked list.
+     * Insert given data as last item of the linked list.
+     * @param data input data to be inserted in linked list as last item.
      */
-    fun insertLast(inputNode: Node<E>) {
-        if (dataList == null) {
-            dataList = inputNode
-        }
+    fun insertLast(data: E) {
 
-        var currentNode = dataList!!
-        while (currentNode.next != null) {
-            currentNode = currentNode.next!!
+        val currentNode = Node(data)
+        when {
+            firstNode == null -> firstNode = currentNode
+            firstNode!!.next == null -> firstNode!!.next = currentNode
+            else -> {
+                val lastNode = getNode(size)
+                lastNode.next = currentNode
+            }
         }
-        currentNode.next = inputNode
         size++
     }
 
     /**
-     * Insert given inputNode in the given position in the linked list.
-     * @param inputNode inputNode to be inserted in linked list.
-     * @param position Position in linked list where the given inputNode should be inserted.
-     * @return Given inputNode insert status, false if given position is not in the range.
+     * Insert given data in the given position in the linked list.
+     * @param data input data to be inserted in linked list at given position.
+     * @param position Position in linked list where the given data should be inserted.
+     * @return Given data insert status, false if given position is not in the range.
      */
-    fun insertAtPosition(inputNode: Node<E>, position: Int): Boolean {
-        return if (position in (INVALID_POSITION + 1)..size) {
-            var counter = 0
-            var currentNode = dataList
-            while (currentNode != null && ++counter < position - 1) {
-                currentNode = currentNode.next
+    fun insertAtPosition(data: E, position: Int): Boolean {
+        return if (position in FIRST_POSITION..size) {
+            val currentNode = Node(data)
+            when (position) {
+                0 -> insertFirst(data)
+                size -> insertLast(data)
+                else -> {
+                    // get node at one position b4 the given position to insert given input data
+                    val nodeBefore = getNode(position)
+                    currentNode.next = nodeBefore.next
+                    nodeBefore.next = currentNode
+                    size++
+                }
             }
-
-            if (currentNode != null) {
-                inputNode.next = currentNode.next
-                currentNode.next = inputNode
-            } else {
-                dataList = inputNode
-            }
-            size++
             true
-        } else false
+        } else {
+            Log.e(TAG, "Invalid position: $position")
+            false
+        }
     }
 
     /**
@@ -69,10 +76,13 @@ class SinglyLinkedList<E> {
      * @return true if list contains at least one node and got deleted else false.
      */
     fun deleteFirst(): Boolean {
-        return if (dataList == null) false
+        return if (firstNode == null) {
+            Log.e(TAG, "List is empty, Can't delete first item")
+            false
+        }
         else {
-            val currentNode = dataList!!.next
-            dataList = currentNode
+            val currentNode = firstNode!!.next
+            firstNode = currentNode
             size--
             true
         }
@@ -85,18 +95,18 @@ class SinglyLinkedList<E> {
     fun deleteLast(): Boolean {
 
         return when {
-            dataList == null -> false
-            dataList!!.next == null -> {
-                dataList = null
+            firstNode == null -> {
+                Log.e(TAG, "List is empty, Can't delete last item")
+                false
+            }
+            firstNode!!.next == null -> {
+                firstNode = null
                 size--
                 true
             }
             else -> {
-                var currentNode = dataList
-                while (currentNode!!.next!!.next != null) {
-                    currentNode = currentNode.next
-                }
-                currentNode.next = null
+                val nodeBefore = getNode(size - 1)
+                nodeBefore.next = null
                 size--
                 true
             }
@@ -104,21 +114,24 @@ class SinglyLinkedList<E> {
     }
 
     /**
-     * Delete given node from the list.
-     * @param node Node to be deleted from the data list.
-     * @return status if given node is present and deleted from the list.
+     * Delete given data from the list.
+     * @param data input data to delete a node with same data in the list.
+     * @return status if given data is present and deleted from the list.
      */
-    fun deleteGivenNode(node: Node<E>): Boolean {
+    fun deleteGivenNode(data: E): Boolean {
         return when {
-            dataList == null -> false
-            dataList!!.data == node.data -> {
-                dataList = dataList!!.next
+            firstNode == null -> {
+                Log.e(TAG, "List is empty, Can't delete given item")
+                false
+            }
+            firstNode!!.data == data -> {
+                firstNode = firstNode!!.next
                 size--
                 true
             } else -> {
-                var currentNode = dataList
+                var currentNode = firstNode
                 while (currentNode!!.next != null) {
-                    if (currentNode.next!!.data == node.data) {
+                    if (currentNode.next!!.data == data) {
                         currentNode.next = currentNode.next!!.next
                         size--
                         return true
@@ -131,19 +144,58 @@ class SinglyLinkedList<E> {
     }
 
     /**
-     * This Checks if given node exist in the list.
-     * @param node input node to check if it exist in the list.
-     * @return true if given node exists in the list else false.
+     * Delete a node based on given position if available in the list.
+     * @param position position of item to be deleted in the list
+     * @return true if given position is in the range and got deleted else false.
      */
-    fun contains(node: Node<E>): Boolean {
-        var currentNode = dataList
+    fun deleteNodeAtGivenPosition(position: Int): Boolean {
+        return if (position in FIRST_POSITION until size) {
+            when (position) {
+                0 -> deleteFirst()
+                size -> deleteLast()
+                else -> {
+                    val nodeBefore = getNode(position - 1)
+                    val deleteNode = nodeBefore.next
+                    nodeBefore.next = deleteNode!!.next
+                    size--
+                }
+            }
+            true
+        } else {
+            Log.e(TAG, "Invalid position: $position")
+            false
+        }
+    }
+
+    /**
+     * This Checks if given data exist in the list.
+     * @param data input data to check if it exist in the list.
+     * @return true if given data exists in the list else false.
+     */
+    fun contains(data: E): Boolean {
+        var currentNode = firstNode
         while (currentNode != null) {
-            if (currentNode.data != null && currentNode.data == node.data) {
+            if (currentNode.data != null && currentNode.data == data) {
                 return true
             }
             currentNode = currentNode.next
         }
         return false
+    }
+
+    /**
+     * Returns a node from list based on the given position.
+     * @param position position of the node which need to be returned from the list
+     * @return node at the given position.
+     */
+    private fun getNode(position: Int): Node<E> {
+        // This function doesn't do any sanity checks and assumes method which call will do all
+        // based on the requirements
+        var currentNode = firstNode
+        for (i in 1 until position){
+            currentNode = currentNode!!.next
+        }
+        return currentNode!!
     }
 
     /**
