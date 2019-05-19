@@ -124,15 +124,16 @@ class SinglyLinkedList<E> {
                 Log.e(TAG, "List is empty, Can't delete given item")
                 false
             }
-            firstNode!!.data == data -> {
+            firstNode?.data == data -> {
                 firstNode = firstNode!!.next
                 size--
                 true
             } else -> {
                 var currentNode = firstNode
-                while (currentNode!!.next != null) {
+                while (currentNode?.next != null) {
                     if (currentNode.next!!.data == data) {
-                        currentNode.next = currentNode.next!!.next
+                        val nodeNext = currentNode.next!!
+                        currentNode.next = nodeNext.next
                         size--
                         return true
                     }
@@ -175,12 +176,23 @@ class SinglyLinkedList<E> {
     fun contains(data: E): Boolean {
         var currentNode = firstNode
         while (currentNode != null) {
-            if (currentNode.data != null && currentNode.data == data) {
+            if (currentNode.data == data) {
                 return true
             }
             currentNode = currentNode.next
         }
         return false
+    }
+
+    /**
+     * Print data of all nodes data in the list.
+     */
+    fun printList() {
+        var currentNode = firstNode
+        while (currentNode != null) {
+            Log.d(TAG, "Value: ${currentNode.data}")
+            currentNode = currentNode.next
+        }
     }
 
     /**
@@ -203,5 +215,5 @@ class SinglyLinkedList<E> {
      * @param data object which holds to data.
      * @param next pointer to next node.
      */
-    class Node<E>(val data: E?, var next: Node<E>? = null)
+    class Node<E>(val data: E, var next: Node<E>? = null)
 }
