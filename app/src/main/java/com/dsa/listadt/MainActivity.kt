@@ -75,6 +75,8 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "Size of the list after add: ${doublyList.getSize()}")
         doublyList.printList()
+        Log.d(TAG, "Print in reverse order")
+        doublyList.printListInReverse()
 
         doublyList.deleteFirst()
         doublyList.deleteLast()
@@ -86,5 +88,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "Size of the list after add: ${doublyList.getSize()}")
         doublyList.printList()
+        Log.d(TAG, "Print in reverse order")
+        doublyList.printListInReverse()
     }
 }

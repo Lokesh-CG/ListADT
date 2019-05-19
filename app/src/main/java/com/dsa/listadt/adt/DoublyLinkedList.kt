@@ -12,7 +12,8 @@ class DoublyLinkedList<E> {
 
     // size starts with 1
     private var size = 0
-    private var firstNode: Node<E>? = null
+    private var head: Node<E>? = null
+    private var tail: Node<E>? = null
 
     /**
      * Returns number of items in this list.
@@ -24,11 +25,12 @@ class DoublyLinkedList<E> {
      * @param data Input data of the node that need to be added as first item in the list.
      */
     fun insertFirst(data: E) {
-        firstNode = if (firstNode == null) {
-            Node(data)
+        head = if (head == null) {
+            tail = Node(data)
+            tail
         } else {
-            val currentNode = Node(data, null, firstNode)
-            firstNode!!.prev = currentNode
+            val currentNode = Node(data, null, head)
+            head!!.prev = currentNode
             currentNode
         }
         size++
@@ -40,18 +42,21 @@ class DoublyLinkedList<E> {
      */
     fun insertLast(data: E) {
         when {
-            firstNode == null -> firstNode = Node(data)
-            firstNode!!.next == null -> {
-                val currentNode = Node(data, prev = firstNode)
-                currentNode.prev = firstNode
-                firstNode!!.next = currentNode
+            head == null -> {
+                head = Node(data)
+                tail = head
+            }
+            head?.next == null -> {
+                val currentNode = Node(data, prev = head)
+                currentNode.prev = head
+                head!!.next = currentNode
+                tail = currentNode
+                tail!!.prev = head
             }
             else -> {
-                val nodeBefore = getNode(size - 1)
-                val nodeNext = nodeBefore.next
-                val currentNode = Node(data, nodeBefore, nodeNext)
-                currentNode.prev = nodeBefore
-                nodeBefore.next = currentNode
+                val lastNode = Node(data, tail, null)
+                tail!!.next = lastNode
+                tail = lastNode
             }
         }
         size++
@@ -72,7 +77,7 @@ class DoublyLinkedList<E> {
                     val nodeBefore = getNode(position - 1)
                     val nodeNext = nodeBefore.next
                     val currentNode = Node(data, nodeBefore, nodeNext)
-                    currentNode.prev = nodeBefore
+                    nodeNext?.prev = currentNode
                     nodeBefore.next = currentNode
                     size++
                 }
@@ -89,12 +94,16 @@ class DoublyLinkedList<E> {
      * @return true if list contains at least one node and got deleted else false.
      */
     fun deleteFirst(): Boolean {
-        return if (firstNode == null) {
+        return if (head == null) {
             Log.e(TAG, "List is empty")
             false
         } else {
-            firstNode = firstNode?.next
-            firstNode?.prev = null
+            head = head?.next
+            if (head == null) {
+                tail = null
+            } else {
+                head!!.prev = null
+            }
             size--
             true
         }
@@ -106,12 +115,13 @@ class DoublyLinkedList<E> {
      */
     fun deleteLast(): Boolean {
         return when {
-            firstNode == null -> {
+            head == null -> {
                 Log.e(TAG, "List is empty")
                 false
             }
-            firstNode?.next == null -> {
-                firstNode = null
+            head?.next == null -> {
+                head = null
+                tail = null
                 size--
                 true
             }
@@ -120,6 +130,7 @@ class DoublyLinkedList<E> {
                 // position as (size - 2)
                 val nodeBefore = getNode(size - 2)
                 nodeBefore.next = null
+                tail = nodeBefore
                 size--
                 true
             }
@@ -133,18 +144,22 @@ class DoublyLinkedList<E> {
      */
     fun deleteNodeWithData(data: E): Boolean {
         return when {
-            firstNode == null -> {
+            head == null -> {
                 Log.e(TAG, "List is empty")
                 false
             }
-            firstNode?.data == data -> {
+            head?.data == data -> {
                 deleteFirst()
                 true
             }
+            tail?.data == data -> {
+                deleteLast()
+                true
+            }
             else -> {
-                var currentNode = firstNode!!
+                var currentNode = head!!
                 while (currentNode.next != null) {
-                    if (currentNode.next!!.data == data) {
+                    if (currentNode.next?.data == data) {
                         val nodeNext = currentNode.next!!
                         nodeNext.next?.prev = currentNode
                         currentNode.next = nodeNext.next
@@ -160,7 +175,8 @@ class DoublyLinkedList<E> {
 
     /**
      * Delete node from the list based on the given position.
-     * @param position 0 based index position to access items from the list.
+     * @param position 0 based index position to access items from .
+     * the list.
      * @return true if node exist at the given position and got deleted else false.
      */
     fun deleteNodeAtPosition(position: Int): Boolean {
@@ -187,10 +203,21 @@ class DoublyLinkedList<E> {
      * Print data of all nodes data in the list.
      */
     fun printList() {
-        var currentNode = firstNode
+        var currentNode = head
         while (currentNode != null) {
             Log.d(TAG, "Value: ${currentNode.data}")
             currentNode = currentNode.next
+        }
+    }
+
+    /**
+     * Prints list data from tail in reverse order.
+     */
+    fun printListInReverse() {
+        var nodeLast = tail
+        while (nodeLast != null) {
+            Log.d(TAG, "Value: ${nodeLast.data}")
+            nodeLast = nodeLast.prev
         }
     }
 
@@ -200,7 +227,7 @@ class DoublyLinkedList<E> {
      * @return Node from the list at the given position.
      */
     private fun getNode(position: Int): Node<E> {
-        var currentNode = firstNode!!
+        var currentNode = head!!
         for (i in FIRST_NODE_POSITION until position) {
             currentNode = currentNode.next!!
         }
