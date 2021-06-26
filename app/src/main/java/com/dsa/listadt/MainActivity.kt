@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.dsa.listadt.adt.DoublyLinkedList
 import com.dsa.listadt.adt.SinglyLinkedList
+import com.dsa.listadt.problems.SinglyListProblems
 
 private val TAG = MainActivity::class.simpleName!!
 
@@ -14,8 +15,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Log.d(TAG, "Main Activity onCreate")
+
+        //LinkedList.flattenLinkedList()
+        SinglyListProblems.flattenLinkedList2()
+
         //singlyLinkedListTests()
-        doublyLinkedListTests()
+        //doublyLinkedListTests()
     }
 
     /**
