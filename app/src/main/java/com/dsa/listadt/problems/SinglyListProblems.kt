@@ -3,6 +3,89 @@ package com.dsa.listadt.problems
 object SinglyListProblems {
 
     /**
+     * Merge sorted linked lists.
+     */
+    fun mergeLinkedLists() {
+
+        val list = addNode(Node(3))
+        addNode(Node(5), list)
+        addNode(Node(6), list)
+        addNode(Node(15), list)
+        addNode(Node(19), list)
+
+        val list2 = addNode(Node(1))
+        addNode(Node(2), list2)
+        addNode(Node(3), list2)
+        addNode(Node(6), list2)
+        addNode(Node(9), list2)
+        addNode(Node(10), list2)
+        addNode(Node(15), list2)
+        addNode(Node(99), list2)
+
+        val list3 = addNode(Node(15))
+        addNode(Node(21), list3)
+        addNode(Node(99), list3)
+        addNode(Node(104), list3)
+
+        printList(list)
+        printList(list2)
+        val result = mergeTwoLists(list, list2)
+        mergeTwoLists(result, list3)
+    }
+
+    private fun mergeTwoLists(head: Node?, head2: Node?): Node? {
+
+        var result: Node? = null    // holds the merged lists
+        var local = head
+        var local2 = head2
+        var next: Node?
+
+        while (local != null || local2 != null) {
+            if (local == null || local2 == null) {
+                result = appendNode(local ?: local2!!, result, true)
+                break
+            } else if (local.data < local2.data) {
+                next = local.next
+                result = appendNode(local, result)
+                local = next
+            } else if (local.data > local2.data) {
+                next = local2.next
+                result = appendNode(local2, result)
+                local2 = next
+            } else {
+                // add one node from each list
+                next = local.next
+                result = appendNode(local, result)
+                local = next
+
+                // add from second list
+                next = local2.next
+                result = appendNode(local2, result)
+                local2 = next
+            }
+        }
+        println("@@@ Results @@@")
+        printList(result)
+        return result
+    }
+
+    private fun appendNode(node: Node, head: Node?, addAll: Boolean = false): Node? {
+
+        if (addAll.not()) node.next = null
+
+        return head?.let {
+            var local = head
+            while (local?.next != null) {
+                local = local.next
+            }
+            local?.next = node
+            head
+        } ?: kotlin.run {
+            node
+        }
+    }
+
+    /**
     1 -> 3
     |           = 1 -> 2 -> 3
     2
@@ -196,8 +279,7 @@ object SinglyListProblems {
             )
         )
         printList(head)
-        val reverseList =
-            reverse(head)
+        val reverseList = reverse(head)
         printList(reverseList)
     }
 

@@ -17,7 +17,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "Main Activity onCreate")
 
         //LinkedList.flattenLinkedList()
-        SinglyListProblems.flattenLinkedList2()
+        //SinglyListProblems.flattenLinkedList2()
+        SinglyListProblems.mergeLinkedLists()
 
         //singlyLinkedListTests()
         //doublyLinkedListTests()
