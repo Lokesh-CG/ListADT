@@ -4,6 +4,8 @@ object SinglyListProblems {
 
     /**
      * Merge sorted linked lists.
+     * Brute force way - merge one by one
+     * time complexity - no.of list * O(n)
      */
     fun mergeLinkedLists() {
 
